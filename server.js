@@ -162,7 +162,7 @@ async function fetchUserRepos(username) {
             throw new Error(`Error: ${response.status}`);
         }
         const repos = await response.json();
-        const filteredRepos = repos.filter(repo => repo.name.toLowerCase() !== username.toLowerCase());
+        const filteredRepos = repos.filter(repo => !process.env.IGNORED_REPOS.split(',').includes(repo.name) && repo.name.toLowerCase() !== username.toLowerCase());
         const detailedRepos = await Promise.all(filteredRepos.map(fetchRepoDetails));
         return detailedRepos;
     } catch (error) {
