@@ -7,7 +7,7 @@
 
 ---
 
-<p align="center">A minimalist portfolio website showcasing open-source projects, skill sets, and integrating real-time updates from GitHub, Spotify, and Discord status for a dynamic, personal showcase.</p>
+<p align="center">A minimalist portfolio website showcasing open-source projects, skill sets, and integrating real-time updates from GitHub, Spotify, and Discord for a dynamic, personal showcase.</p>
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
