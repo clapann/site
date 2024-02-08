@@ -40,7 +40,7 @@ app.get('/', async (req, res) => {
 
 const socket = new Websocket("wss://api.lanyard.rest/socket"); // Subscribe to the lanyard.rest websocket for Discord status updates.
 
-socket.on("message", (data) => {
+socket.on("message", async (data) => {
     const json = JSON.parse(data);
 
     if(json.op === 1) {
@@ -51,8 +51,9 @@ socket.on("message", (data) => {
                 socket.send(JSON.stringify({ op: 3 }));
         }, json.d.heartbeat_interval);
     } else if (json.op === 0) {
-        userData = { ...json.d, statusData: getStatusColor(json.d.discord_status) };
-        return io.emit('update', userData);
+        const statusColor = await getStatusColor(json.d.discord_status);
+        userData = { ...json.d, statusData: statusColor };
+        io.emit('update', userData);
     }
 });
 
@@ -62,7 +63,7 @@ server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
 
-function getStatusColor(status) {
+async function getStatusColor(status) {
     const colors = {
         'online': 'green',
         'idle': 'yellow',
