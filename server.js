@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import fetch from 'cross-fetch';
 import { createServer } from "http";
 import { Server } from "socket.io";
-import Websocket from "ws";
+import { WebSocket } from "ws";
 import { readFileSync } from 'fs';
 
 dotenv.config();
@@ -15,6 +15,8 @@ const io = new Server(server, { // This socket will be used to send Spotify upda
 
 let userData = {}; // Cache userData to be able to load the site without having to wait for an update.
 let languageColorCache = {}; // Cache languageColor data to use up less resources from constantly calling colors.
+let socket = null; // Holds Lanyard socket connection.
+let isAttemptingReconnect = false; // Prevent multiple reconnections.
 
 app.use('/public', express.static('public'));
 app.set('view engine', 'ejs');
@@ -38,24 +40,7 @@ app.get('/', async (req, res) => {
     });
 });
 
-const socket = new Websocket("wss://api.lanyard.rest/socket"); // Subscribe to the lanyard.rest websocket for Discord status updates.
-
-socket.on("message", async (data) => {
-    const json = JSON.parse(data);
-
-    if(json.op === 1) {
-        subscribeToUsers(process.env.DISCORD_ID);
-
-        setInterval(() => {
-            if (socket.readyState == socket.OPEN)
-                socket.send(JSON.stringify({ op: 3 }));
-        }, json.d.heartbeat_interval);
-    } else if (json.op === 0) {
-        const statusColor = await getStatusColor(json.d.discord_status);
-        userData = { ...json.d, statusData: statusColor };
-        io.emit('update', userData);
-    }
-});
+connectLanyardWebSocket();
 
 // Start the server
 const port = process.env.PORT || 3000
@@ -182,9 +167,50 @@ function getLanguageColor(language) {
     return colors[language] || '#000000';
 }
 
-function subscribeToUsers(id) {
-    if (socket.readyState == socket.OPEN)
-        socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: id } }));
+function connectLanyardWebSocket() {
+    if (socket !== null && socket.readyState === WebSocket.OPEN) return;
+
+    isAttemptingReconnect = false;
+    socket = new WebSocket("wss://api.lanyard.rest/socket");
+
+    socket.on("open", () => {
+        console.log('Connected to Lanyard websocket.');
+    });
+
+    socket.on("message", async (eventData) => {
+        const data = JSON.parse(eventData);
+
+        if (data.op === 1) {
+            socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: process.env.DISCORD_ID } }));
+
+            setInterval(() => {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    socket.send(JSON.stringify({ op: 3 }));
+                }
+            }, data.d.heartbeat_interval);
+        } else if (data.op === 0) {
+            const statusColor = await getStatusColor(data.d.discord_status);
+            userData = { ...data.d, statusData: statusColor };
+            io.emit('update', userData);
+        }
+    });
+
+    socket.on("close", () => {
+        console.log('Lanyard connection is closed. Reconnecting...');
+        if (!isAttemptingReconnect) {
+            isAttemptingReconnect = true;
+            setTimeout(connectLanyardWebSocket, 1000);
+        }
+    });
+
+    socket.on("error", (error) => {
+        console.log('Lanyard connection errored. Closing & reconnecting...', error.message);
+        if (!isAttemptingReconnect) {
+            socket.close();
+            isAttemptingReconnect = true;
+            setTimeout(connectLanyardWebSocket, 1000);
+        }
+    });
 }
 
 function getSelectedIcons() {

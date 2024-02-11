@@ -59,8 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
         statusText.innerText = data.statusData.status
 
         if (data.spotify) {
-            songTitle.textContent = `${data.spotify.song} by ${data.spotify.artist.split(';')[0]}`;
-            songImage.src = data.spotify.album_art_url;
+            var artists = data.spotify.artist.split(/[,;]\s+/);
+            artists = artists.length > 1 ? `${artists.slice(0, -1).join(", ")} & ${artists[artists.length - 1]}` : artists.join();
+
+            songTitle.innerHTML = `<span style="color: hsla(0, 0%, 100%, .6);">Listening to</span> ${data.spotify.song} by ${artists}`;
+            songImage.src = !data.spotify.album_art_url ? 'https://cdn.freebiesupply.com/logos/large/2x/spotify-2-logo-png-transparent.png' : data.spotify.album_art_url;
             songLink.href = `https://open.spotify.com/track/${data.spotify.track_id}`
 
             const startTime = data.spotify.timestamps.start;
