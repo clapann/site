@@ -164,59 +164,18 @@
                         <% } %>
                     </div>
                     <div class="flex w-full max-w-[600px] flex-col gap-y-3 gap-y-5 font-semibold" style="margin-top: 0.75rem;">
-                        <h1 class="m-0 flex w-full max-w-[600px] items-center gap-x-3 font-semibold">Technologies &amp; Frameworks <div class="h-[1px] grow bg-black/10 dark:bg-white/20"></div>
-                        </h1>
+                        <h1 class="m-0 flex w-full max-w-[600px] items-center gap-x-3 font-semibold">Technologies & Frameworks <div class="h-[1px] grow bg-black/10 dark:bg-white/20"></div></h1>
                         <div class="grid grid-cols-3 gap-5 md:grid-cols-4">
-                            <div class="flex flex-col flex-wrap gap-y-2">
-                                <h2 class="text-sm font-medium text-gray-600 dark:text-white">Programming Languages</h2>
-                                <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
-                                    <% icons['Programming Languages'].forEach(function(icon) { %>
-                                        <i class="<%= icon %> "></i>
-                                    <% }); %>
+                            <% ['Programming Languages', 'Web Development', 'Server Technologies', 'Graphic Design', 'Machine Learning & AI', 'Miscellaneous'].forEach(function(icon) { %>
+                                <div class="flex flex-col flex-wrap gap-y-2">
+                                    <h2 class="text-sm font-medium text-gray-600 dark:text-white"><%= icon %> </h2>
+                                    <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
+                                        <% icons[icon].forEach(function(icon) { %>
+                                            <i class="<%= icon %> "></i>
+                                        <% }); %>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex flex-col flex-wrap gap-y-2">
-                                <h2 class="text-sm font-medium text-gray-600 dark:text-white">Web Development</h2>
-                                <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
-                                    <% icons['Web Development'].forEach(function(icon) { %>
-                                        <i class="<%= icon %> "></i>
-                                    <% }); %>
-                                </div>
-                            </div>
-                            <div class="flex flex-col flex-wrap gap-y-2">
-                                <h2 class="text-sm font-medium text-gray-600 dark:text-white">Server Technologies</h2>
-                                <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
-                                    <% icons['Server Technologies'].forEach(function(icon) { %>
-                                        <i class="<%= icon %> "></i>
-                                    <% }); %>
-                                </div>
-                            </div>
-                            <div class="flex flex-col flex-wrap gap-y-2">
-                                <h2 class="text-sm font-medium text-gray-600 dark:text-white">Graphic Design</h2>
-                                <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
-                                    <% icons['Graphic Design'].forEach(function(icon) { %>
-                                        <i class="<%= icon %> "></i>
-                                    <% }); %>
-                                </div>
-                            </div>
-    
-                            <div class="flex flex-col flex-wrap gap-y-2">
-                                <h2 class="text-sm font-medium text-gray-600 dark:text-white">Machine Learning & AI</h2>
-                                <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
-                                    <% icons['Machine Learning & AI'].forEach(function(icon) { %>
-                                        <i class="<%= icon %> "></i>
-                                    <% }); %>
-                                </div>
-                            </div>
-
-                            <div class="flex flex-col flex-wrap gap-y-2">
-                                <h2 class="text-sm font-medium text-gray-600 dark:text-white">Miscellaneous</h2>
-                                <div class="flex flex-row flex-wrap gap-2 text-gray-700 dark:text-white/50">
-                                    <% icons['Miscellaneous'].forEach(function(icon) { %>
-                                        <i class="<%= icon %> "></i>
-                                    <% }); %>
-                                </div>
-                            </div>
+                            <% }); %>
                         </div>
                     </div>
                 </div>
