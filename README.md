@@ -1,6 +1,7 @@
 <p align="center">
-	<a href="" rel="noopener">
-	<img width=200px height=200px src="https://avatars.githubusercontent.com/u/56710853?v=4"></a>
+    <a href="" rel="noopener">
+	<img width=600px src="/public/assets/banner.png">
+    </a>
 </p>
 
 <h3 align="center">Portfolio Website</h3>
